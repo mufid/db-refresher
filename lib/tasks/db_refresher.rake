@@ -1,7 +1,37 @@
 namespace :db_refresher do
   desc 'Refresh current db state to all migrations (from cache if available)'
   task refresh: :environment do
-    puts "Refresh!"
+
+    conn = nil
+    safe_schema_head_sql = nil
+    use_safe = false
+
+    begin
+      conn = ActiveRecord::Base.connection
+      safe_schema_head_sql = "drop schema public cascade; create schema public;"
+      use_safe = true
+      sql = ActiveRecord::Base.send(:sanitize_sql_array, safe_schema_head_sql)
+      conn.execute(sql)
+    rescue ActiveRecord::NoDatabaseError
+      safe_schema_head_sql = File.read(File.join(File.dirname(__FILE__), '..', 'sql', 'postgres_head.sql'))      
+
+      config = Rails.configuration.database_configuration[Rails.env]
+
+      variables = {
+        db_name:  config['database'],
+        user_name: config['username'],
+      }
+
+      variables.each_pair do |key, value|
+        safe_schema_head_sql = safe_schema_head_sql.gsub("s{#{key}}", value)
+      end
+
+      File.write('/tmp/refresh_db.sql', safe_schema_head_sql)
+
+      system("sudo -u postgres psql < /tmp/refresh_db.sql")
+    end
+    
+
   end
 
   desc 'Refresh current cache'
