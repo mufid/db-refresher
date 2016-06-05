@@ -12,7 +12,9 @@ namespace :db_refresher do
       use_safe = true
       sql = ActiveRecord::Base.send(:sanitize_sql_array, safe_schema_head_sql)
       conn.execute(sql)
-    rescue ActiveRecord::NoDatabaseError
+    rescue ActiveRecord::NoDatabaseError, PG::ConnectionBad => e
+      puts "Woops: #{e.message}"
+
       safe_schema_head_sql = File.read(File.join(File.dirname(__FILE__), '..', 'sql', 'postgres_head.sql'))      
 
       config = Rails.configuration.database_configuration[Rails.env]
@@ -26,9 +28,11 @@ namespace :db_refresher do
         safe_schema_head_sql = safe_schema_head_sql.gsub("s{#{key}}", value)
       end
 
-      File.write('/tmp/refresh_db.sql', safe_schema_head_sql)
+      file_name = "/tmp/refresh_db-#{Time.now.to_i}.sql"
 
-      system("sudo -u postgres psql < /tmp/refresh_db.sql")
+      File.write(file_name, safe_schema_head_sql)
+
+      system("sudo -u postgres psql < #{file_name}")
     end
     
 

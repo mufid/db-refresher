@@ -1,8 +1,8 @@
 Gem::Specification.new do |s|
 
   s.name        = 'refresher'
-  s.version     = '0.1.0'
-  s.date        = '2016-03-27'
+  s.version     = '0.1.1'
+  s.date        = '2016-06-05'
   s.summary     = "db-refresher"
   s.description = "Fast database prototyping with Rails"
   s.authors     = ["Mufid Afif"]
