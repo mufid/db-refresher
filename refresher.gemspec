@@ -11,6 +11,6 @@ Gem::Specification.new do |s|
     'refresher.gemspec',
   ].concat( Dir.glob('lib/**/*').reject {|f| File.directory?(f) || f =~ /~$/ } )
   # s.test_files  = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.homepage    = 'https://github.com/mufid/refresher'
+  s.homepage    = 'https://github.com/mufid/db-refresher'
   s.license     = 'MIT'
 end
