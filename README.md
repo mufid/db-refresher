@@ -1,5 +1,24 @@
 # refresher - A simble database schema cache refresh
 
+## Tl;dr
+
+Refresher allows you to create user and database with just only single
+command: `rake db_refresher`. Then you can continue with `rake db:migrate`
+
+## Installation and Usage
+
+Add into your `Gemfile`:
+
+    gem 'refresher'
+
+Then run
+
+    rake db_refresher; rake db:migrate
+
+You may want to run `db:seeds` too if you have any.
+
+## Story
+
 Imagine you are prototyping a Rails application with much table (let say 30+ 
 tables) at the first time. You might end up with this:
 
